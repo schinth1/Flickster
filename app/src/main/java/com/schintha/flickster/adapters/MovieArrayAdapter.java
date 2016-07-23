@@ -17,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
  * Created by sc043016 on 7/19/16.
@@ -27,7 +28,7 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
         super(context, android.R.layout.simple_list_item_1, movies);
 
     }
-    
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         // get the data item for position
@@ -49,9 +50,9 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
         boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         if (isLandscape) {
-            Picasso.with(getContext()).load(movie.getBackdropPath()).into(holder.ivMovieImage);
+            Picasso.with(getContext()).load(movie.getBackdropPath()).transform(new RoundedCornersTransformation(10, 10)).into(holder.ivMovieImage);
         } else {
-            Picasso.with(getContext()).load(movie.getPosterPath()).into(holder.ivMovieImage);
+            Picasso.with(getContext()).load(movie.getPosterPath()).transform(new RoundedCornersTransformation(10, 10)).into(holder.ivMovieImage);
         }
 
         return view;
