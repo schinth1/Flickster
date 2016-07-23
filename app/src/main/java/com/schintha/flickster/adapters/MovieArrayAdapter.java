@@ -1,6 +1,7 @@
 package com.schintha.flickster.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by sc043016 on 7/19/16.
  */
@@ -23,34 +27,50 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
         super(context, android.R.layout.simple_list_item_1, movies);
 
     }
-
+    
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View view, ViewGroup parent) {
         // get the data item for position
-        Movie  movie = getItem(position);
+         Movie  movie = getItem(position);
 
-        //check the existing view being reused
-        if(convertView == null)
-        {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_movie, parent, false);
+        ViewHolder holder;
+        if (view != null) {
+            holder = (ViewHolder) view.getTag();
+        }
+        else {
+            view = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
-        //find the image view
-        ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivMovieImage);
-        //clear out image from convertView
-        ivImage.setImageResource(0);
+        holder.ivMovieImage.setImageResource(0);
+        holder.tvTitle.setText(movie.getOriginalTitle());
+        holder.tvOverview.setText(movie.getOverview());
 
-        TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        TextView tvOverview = (TextView) convertView.findViewById(R.id.tvOverview);
+        boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        if (isLandscape) {
+            Picasso.with(getContext()).load(movie.getBackdropPath()).into(holder.ivMovieImage);
+        } else {
+            Picasso.with(getContext()).load(movie.getPosterPath()).into(holder.ivMovieImage);
+        }
 
+        return view;
+    }
 
-        //populate data
-        tvTitle.setText(movie.getOriginalTitle());
-        tvOverview.setText(movie.getOverview());
+    //ViewHolder class
+    static class ViewHolder {
 
-        Picasso.with(getContext()).load(movie.getPosterPath()).into(ivImage);
-        //return the view.
-        return convertView;
+        @BindView(R.id.ivMovieImage)
+        ImageView ivMovieImage;
+
+        @BindView(R.id.tvTitle)
+        TextView tvTitle;
+
+        @BindView(R.id.tvOverview)
+        TextView tvOverview;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 }
